@@ -5,6 +5,7 @@
 """
 from pydantic import TypeAdapter
 from sqlalchemy import select
+from sqlalchemy.dialects.mysql import insert
 from app.domain.state import DialogueState
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -45,4 +46,20 @@ class DialogueRepository:
                 return None
 
     async def save(self, state: DialogueState):
-        pass
+        # 1 把DialogueState对象类型数据转换字符串
+        state_json = DIALOGUE_STATE_ADAPTER.dump_json(state).decode(encoding='utf-8')
+
+        # 2 创建sql语句
+        # from sqlalchemy.dialects.mysql import insert
+        statement = insert(DialogueStateRecord).values(
+            sender_id=state.sender_id,
+            state_json=state_json)
+
+        # 判断当前用户是否存在会话状态数据，如果不存在添加，如果存在更新
+        # 方言的mysql的insert语句有方法，根据主键判断，如果主键存在更新，不存在添加
+        on_duplicate_key = statement.on_duplicate_key_update(
+            state_json=state_json
+        )
+
+        await self.session.execute(on_duplicate_key)
+        await self.session.commit()
