@@ -22,28 +22,27 @@ class DialogueRepository:
     def __init__(self, session: AsyncSession):
         self.session = session
 
-        # 根据sender_id查询历史会话状态数据
-        # 因为存储上一次会话状态数据，查询结果为空，有一条记录
-        async def load(self, sender_id: str) -> DialogueState:
-            # 1 创建sql语句，使用方法创建
-            # SELECT * FROM dialogue_states  WHERE send_id =?
-            # sql1 = "SELECT * FROM dialogue_states  WHERE send_id =:sid"
-            # await self.session.execute(sql1,{"sid":sender_id})
+    # 根据sender_id查询历史会话状态数据
+    # 因为存储上一次会话状态数据，查询结果为空，有一条记录
+    async def load(self, sender_id: str) -> DialogueState:
+        # 1 创建sql语句，使用方法创建
+        # SELECT * FROM dialogue_states  WHERE send_id =?
+        # sql1 = "SELECT * FROM dialogue_states  WHERE send_id =:sid"
+        # await self.session.execute(sql1,{"sid":sender_id})
 
-            sql = select(DialogueStateRecord).where(
-                DialogueStateRecord.sender_id == sender_id)
-            # 2 执行sql语句
-            result = await self.session.execute(sql)
+        sql = select(DialogueStateRecord).where(
+            DialogueStateRecord.sender_id == sender_id)
+        # 2 执行sql语句
+        result = await self.session.execute(sql)
 
-            # 3 从查询result对象获取结果
-            record = result.scalar_one_or_none()
-            if record:
-                # record不是DialogueState对象，转换DialogueState对象
-                state = DIALOGUE_STATE_ADAPTER.validate_json(record.state_json)
-                return state
-            else:  # 没有查询数据
-                # return DialogueState(sender_id=sender_id)
-                return None
+        # 3 从查询result对象获取结果
+        record = result.scalar_one_or_none()
+        if record:
+            # record不是DialogueState对象，转换DialogueState对象
+            state = DIALOGUE_STATE_ADAPTER.validate_json(record.state_json)
+            return state
+        else:  # 没有查询数据
+            return DialogueState(sender_id=sender_id)
 
     async def save(self, state: DialogueState):
         # 1 把DialogueState对象类型数据转换字符串

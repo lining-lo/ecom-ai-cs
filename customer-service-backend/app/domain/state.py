@@ -14,7 +14,8 @@ class Turn:
     # 用户提问
     user_message: UserMessage
     # 客服回复
-    bot_message: list[BotMessage]=field(default_factory=list)
+    bot_message: list[BotMessage] = field(default_factory=list)
+
 
 # 会话对象
 @dataclass
@@ -28,23 +29,25 @@ class Session:
     # 关闭时间
     closed_at: float
     # 每个session会话多轮对话
-    turns:list[Turn]=field(default_factory=list)
+    turns: list[Turn] = field(default_factory=list)
+
 
 # 对象类型消息
 @dataclass
 class FocusedObject:
-    type:str
-    id:str
-    title:str | None=None
-    attributes:dict=field(default_factory=dict)
+    type: str
+    id: str
+    title: str | None = None
+    attributes: dict = field(default_factory=dict)
+
 
 # 三种能力都有数据：任务流程、知识问答、闲聊
 @dataclass
 class SharedState:
     # 对象类型消息
-    focused_object: FocusedObject | None
+    focused_object: FocusedObject | None = None
     # 多个会话数据
-    sessions: list[Session] | None
+    sessions: list[Session] | None = None
 
 
 # 某个任务流程步骤相关数据
@@ -57,7 +60,7 @@ class TaskInstance:
     # 当前任务id
     task_id: str
     # 槽位数据字典  {order_number : a10098765}
-    slots: dict= field(default_factory=dict)
+    slots: dict = field(default_factory=dict)
 
 
 # 任务流程特有数据，流程步骤数据
@@ -74,6 +77,6 @@ class DialogueState:
     # 用户id
     sender_id: str
     # 三种能力都有数据：任务流程、知识问答、闲聊
-    shared: SharedState=field(default_factory=SharedState)
+    shared: SharedState = field(default_factory=SharedState)
     # 任务流程特有数据，流程步骤数据
-    tasks: TaskState=field(default_factory=TaskState)
+    tasks: TaskState = field(default_factory=TaskState)
