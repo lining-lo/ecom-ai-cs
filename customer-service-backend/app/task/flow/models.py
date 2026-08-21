@@ -4,7 +4,7 @@
   @Desc:
 """
 from dataclasses import dataclass, field
-from app.task.flow.steps import FlowStep
+from app.task.flow.steps import FlowStep, StartFlowStep
 
 
 @dataclass
@@ -23,10 +23,20 @@ class Flow:
     slots: list[FlowSlot] = field(default_factory=list)
     name: str | None = None
 
+    def get_start_step(self)->StartFlowStep:
+        """获取开始类型步骤数据"""
+        for step in self.steps:
+            # 判断 开始类型
+            if isinstance(step, StartFlowStep):
+                return step
+        raise Exception("Flow not found")
+
 
 @dataclass
 class FlowCatalog:
     flows: dict[str, Flow] = field(default_factory=dict)
     slots: dict[str, FlowSlot] = field(default_factory=dict)
 
-
+    def get_flow_by_id(self, flow_id):
+        """根据流程id查询流程的方法"""
+        return self.flows[flow_id]
