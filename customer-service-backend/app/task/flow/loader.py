@@ -67,6 +67,20 @@ class FlowLoader:
             flows[flow_id] = flow
         return flows
 
+    # 加载多个yaml配置文件
+    def load_many(self, paths:list[Path])->FlowCatalog:
+        flows: dict[str, Flow] = {}
+        slots: dict[str, FlowSlot] = {}
+
+        # path遍历
+        for path in paths:
+            # 调用load方法
+            catalog = self.load(path)
+            # 封装数据
+            # {a:1} .update ( {b:2}) =>  {a:1,b:2,}
+            flows.update(catalog.flows)
+            slots.update(catalog.slots)
+        return FlowCatalog(flows=flows, slots=slots)
 
 if __name__ == "__main__":
     loader = FlowLoader()
