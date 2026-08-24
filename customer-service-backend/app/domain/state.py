@@ -3,6 +3,8 @@
   @Time:2026/8/17
   @Desc: 
 """
+import time
+import uuid
 from dataclasses import dataclass, field
 from app.domain.message import UserMessage, BotMessage
 from app.task.lifecycle.models import TaskEvent, TaskSwitched, TaskStarted, TaskRef, TaskCanceled, TaskResumed
@@ -49,6 +51,21 @@ class SharedState:
     focused_object: FocusedObject | None = None
     # 多个会话数据
     sessions: list[Session] | None = None
+
+    # 创建新session
+    def create_session(self):
+        now = time.time()
+        session = Session(
+            session_id=str(uuid.uuid4()),
+            started_at=now,
+            last_activity_at=now,
+        )
+        # 创建session对象放到state里面
+        self.sessions.append(session)
+
+    # 关闭当前session
+    def close_current_session(self):
+        self.sessions[-1].closed_at = time.time()
 
 
 # 某个任务流程步骤相关数据

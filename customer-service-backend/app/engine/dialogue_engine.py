@@ -3,6 +3,7 @@
   @Time:2026/8/17
   @Desc: 
 """
+import time
 import uuid
 from app.domain.message import UserMessage, ProcessResult, MessageType, BotMessage
 from app.domain.state import DialogueState, Turn
@@ -50,8 +51,27 @@ class DialogueEngine:
         )
 
     # 1 准备当前session会话
-    def _prepare_session(self, state: DialogueState):
-        pass
+    def _prepare_session(self, state:DialogueState):
+        # 判断当前session存在
+        # 不存在session
+        if not state.shared.sessions:
+            # 创建session
+            state.shared.create_session()
+
+        else: # 存在session
+            # 判断session是否过期,
+            current_session = state.shared.sessions[-1]
+            # 获取当前时间戳
+            now = time.time()
+            # 60分钟不活跃过期
+            if now - current_session.last_activity_at > 60*60 :
+                # 手动session过期
+                state.shared.close_current_session()
+                # 创建新session
+                state.shared.create_session()
+            else:  # session没有过期
+                # 更新最后活跃时间当前时间
+                current_session.last_activity_at = now
 
     # 2 处理文本类型消息
     def _execute_text_message(self,
