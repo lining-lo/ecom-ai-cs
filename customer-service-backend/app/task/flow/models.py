@@ -31,6 +31,13 @@ class Flow:
                 return step
         raise Exception("Flow not found")
 
+    def get_step_by_id(self, step_id)->FlowStep:
+        """根据步骤id获取步骤对应数据"""
+        for step in self.steps:
+            if step.id == step_id:
+                return step
+        raise Exception("step not found")
+
 
 @dataclass
 class FlowCatalog:
