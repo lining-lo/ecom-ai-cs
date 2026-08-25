@@ -7,7 +7,7 @@ import time
 import uuid
 from app.domain.message import UserMessage, ProcessResult, MessageType, BotMessage
 from app.domain.state import DialogueState, Turn
-from app.plan.turn_plan import TurnPlan
+from app.plan.turn_plan import TurnPlaner
 from app.plan.turn_plan_validation import TurnPlanValidation
 from app.task.handler import TaskHandler
 
@@ -15,7 +15,7 @@ from app.task.handler import TaskHandler
 # 处理消息
 class DialogueEngine:
     def __init__(self,
-                 turn_plan: TurnPlan,
+                 turn_plan: TurnPlaner,
                  turn_plan_validation: TurnPlanValidation,
                  task_handler: TaskHandler):
         self._turn_plan = turn_plan

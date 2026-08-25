@@ -9,6 +9,7 @@ from langchain_core.output_parsers import JsonOutputParser
 from langchain_core.prompts import PromptTemplate
 from app.domain.message import UserMessage
 from app.domain.state import DialogueState
+from app.plan.models import TurnPlan
 from app.prompts.history_builder import HistoryBuilder
 from app.prompts.loader import load_prompt
 from app.task.flow.models import FlowCatalog, Flow
@@ -16,11 +17,11 @@ from app.utils.llm_client import llm
 
 
 # 意图识别组件
-class TurnPlan:
+class TurnPlanner:
 
     async def plan(self, user_message: UserMessage,
                    state: DialogueState,
-                   flow_catalog: FlowCatalog) -> "TurnPlan":
+                   flow_catalog: FlowCatalog) -> TurnPlan:
         # 1 加载提示词模版
         prompt_text = load_prompt('turn_plan')
         prompt = PromptTemplate.from_template(
