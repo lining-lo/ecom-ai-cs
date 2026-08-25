@@ -5,10 +5,15 @@
 """
 import time
 import uuid
+from dataclasses import asdict
+
 from app.domain.message import UserMessage, ProcessResult, MessageType, BotMessage
-from app.domain.state import DialogueState, Turn
+from app.domain.state import DialogueState, Turn, FocusedObject
 from app.plan.models import TurnPlan, TurnPlanValidationResult
 from app.plan.turn_plan_validation import TurnPlanValidation
+from app.task.command.models import SetSlotsCommand
+from app.task.flow.models import Flow
+from app.task.flow.steps import FlowStep, CollectSlotStep
 from app.task.handler import TaskHandler
 
 
@@ -113,5 +118,60 @@ class DialogueEngine:
             pass
 
     # 处理对象类型消息
-    def _execute_object_message(self, user_message, state) -> list[BotMessage]:
-        pass
+    async def _execute_object_message(self, user_message, state):
+        # 1 把对象消息放到state里面 focused_object
+        state.shared.focused_object = FocusedObject(
+            **asdict(user_message.object)
+        )
+
+        # 2 判断，是否填充槽位数据
+        if self._can_fill_slots(state):
+            if user_message.object.type == 'order':
+                slots = {'order_number':user_message.object.id}
+            else:
+                slots = {'product_id':user_message.object.id}
+
+            # 最终调用TaskHandler里面方法，传入command对象，对象类型消息处理
+            # 没有调用意图识别组件，没有command
+            # 手动构建command对象，设置对应类型
+            # {"command": "set_slots", "slots": {"<slot_name>": "<value>"}}`
+            command = SetSlotsCommand(
+                command='set_slots',
+                slots=slots
+            )
+            # 调用TaskHandler方法执行
+            return await self._task_handler.handle(
+                commands=[command],
+                state=state,
+                user_message=user_message,
+            )
+        else:
+            # 反问澄清
+            pass
+
+    # 是否填充槽数据
+    def _can_fill_slots(self, state:DialogueState)->bool:
+        # 1 判断当前是否有活跃任务
+        active_task = state.tasks.active
+        if not active_task:
+            return False
+
+        # 2 有活跃任务
+        # 根据当前任务流程id，获取流程对象
+        flow_id = active_task.flow_id
+        flow:Flow = self._task_handler._flow_catalog.get_flow_by_id(flow_id)
+
+        # 从流程对象获取所有步骤列表，当前任务步骤id到列表找到步骤对应数据
+        step:FlowStep = flow.get_step_by_id(active_task.step_id)
+
+        # # 判断当前步骤是否collect类型
+        if not isinstance(step, CollectSlotStep):
+            return False
+
+        if (step.slot_name=='order_number') and (state.shared.focused_object.type == 'order'):
+            return True
+
+        if (step.slot_name=='product_id') and (state.shared.focused_object.type == 'product'):
+            return True
+
+        return False
