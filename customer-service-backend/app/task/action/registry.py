@@ -3,7 +3,7 @@
   @Time:2026/8/24
   @Desc:
 """
-from app.action.base import Action
+from app.task.action.base import Action
 
 
 class ActionRegistry:

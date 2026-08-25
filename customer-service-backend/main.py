@@ -7,6 +7,7 @@ from contextlib import asynccontextmanager
 import uvicorn
 from fastapi import FastAPI
 from app.api.chat_router import chat_router
+from app.api.depend import init_dialogue_engine
 from app.conf.config import settings
 from app.utils.database_client import init_database, close_database
 
@@ -14,6 +15,7 @@ from app.utils.database_client import init_database, close_database
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     init_database()
+    init_dialogue_engine()
     yield
     await close_database()
 

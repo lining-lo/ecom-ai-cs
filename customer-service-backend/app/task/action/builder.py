@@ -3,9 +3,9 @@
   @Time:2026/8/24
   @Desc:
 """
-from app.action.custom.logistics_tracking import LookupTracking
-from app.action.custom.lookup_order_status import LookupOrderStatus
-from app.action.registry import ActionRegistry
+from app.task.action.custom.logistics_tracking import LookupTracking
+from app.task.action.custom.lookup_order_status import LookupOrderStatus
+from app.task.action.registry import ActionRegistry
 
 
 # todo 根据包扫描规则实现自动注册

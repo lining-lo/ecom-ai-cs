@@ -3,8 +3,8 @@
   @Time:2026/8/23
   @Desc: 
 """
-from app.action.base import ActionCall, ActionResult
-from app.action.runner import ActionRunner
+from app.task.action.base import ActionCall, ActionResult
+from app.task.action.runner import ActionRunner
 from app.domain.message import UserMessage, BotMessage
 from app.domain.state import DialogueState
 # from app.task.action.base import ActionCall

@@ -40,7 +40,7 @@ class DialogueEngine:
         if user_message.type == MessageType.TEXT:
             messages: list[BotMessage] = await self._execute_text_message(user_message, state)
         else:  # 对象类型消息
-            messages: list[BotMessage] = self._execute_object_message(user_message, state)
+            messages: list[BotMessage] = await self._execute_object_message(user_message, state)
 
         # 4 提交本轮对话记录
         ## 封装list[BotMessage]到turn对象

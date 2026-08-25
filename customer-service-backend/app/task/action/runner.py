@@ -3,8 +3,8 @@
   @Time:2026/8/23
   @Desc:
 """
-from app.action.base import ActionCall, ActionResult, Action
-from app.action.registry import ActionRegistry
+from app.task.action.base import ActionCall, ActionResult, Action
+from app.task.action.registry import ActionRegistry
 from app.domain.state import DialogueState
 
 
