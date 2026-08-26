@@ -1,7 +1,9 @@
 """
   @Author:lining-lo
   @Time:2026/8/21
-  @Desc: 
+  @Desc:任务生命周期应答组件，
+        根据任务事件生成用户提示话术；
+        处理任务启动、切换、恢复、取消，输出对应的Bot回复消息
 """
 from app.domain.message import BotMessage
 from app.task.flow.models import FlowCatalog, Flow
@@ -9,22 +11,26 @@ from app.task.lifecycle.models import TaskEvent, TaskStarted, TaskSwitched, Task
 
 
 class TaskLifecycleResponder:
+    """任务生命周期应答组件"""
+
     def __init__(self, flows: FlowCatalog) -> None:
         self.flows = flows
 
-    def respond(self, events: list[TaskEvent]) -> list[BotMessage]:
+    async def respond(self, events: list[TaskEvent]) -> list[BotMessage]:
+        """根据任务给出应答的方法"""
         messages: list[BotMessage] = []
         # 遍历
         for event in events:
             messages.append(self._execute_event_data(event))
         return messages
 
-    # 根据流程id获取对应名称
     def _get_flow_name(self, flow_id: str) -> str:
+        """根据流程id获取对应名称"""
         flow: Flow = self.flows.get_flow_by_id(flow_id)
         return flow.name
 
     def _execute_event_data(self, event: TaskEvent) -> BotMessage:
+        """根据任务生成应答的方法"""
         if isinstance(event, TaskStarted):
             flow_name = self._get_flow_name(event.task.flow_id)
             return BotMessage(text=f"好的，我现在开始处理{flow_name}")

@@ -1,7 +1,10 @@
 """
   @Author:lining-lo
   @Time:2026/8/21
-  @Desc: 
+  @Desc:意图处理器，
+        解析并执行各类Command意图；
+        完成启动流程、设置槽位、取消、恢复任务，
+        生成TaskEvent任务事件，更新DialogueState会话任务状态
 """
 from app.domain.state import DialogueState, TaskInstance
 from app.task.command.models import Command, StartFlowCommand, SetSlotsCommand, CancelTaskCommand, ResumeTaskCommand
@@ -11,14 +14,20 @@ from app.task.lifecycle.models import TaskEvent
 
 
 class CommandProcessor:
-    # commands 意图识别返回结果
-    # state：状态数据
-    # flows：流程数据
-    def run(self,
-            commands: list[Command],
-            state: DialogueState,
-            flows: FlowCatalog,
-    ) -> list[TaskEvent]:
+    """意图处理器"""
+
+    async def run(self,
+                  commands: list[Command],
+                  state: DialogueState,
+                  flows: FlowCatalog,
+                  ) -> list[TaskEvent]:
+        """
+        执行意图的主方法
+        :param commands: llm意图识别返回结果列表
+        :param state: 对话运行状态
+        :param flows: 任务流程与槽位数据
+        :return: list[TaskEvent]: 任务列表
+        """
         # 定义遍历，封装最终数据
         events: list[TaskEvent] = []
         # 遍历commands，得到每个command，根据不同类型分别不同处理
@@ -26,17 +35,23 @@ class CommandProcessor:
             # 调用方法
             event = self._apply(command=command,
                                 state=state,
-                                flows=flows)
+                                flow_catalog=flows)
             if event:
                 events.append(event)
         return events
 
-    # 处理每个command
     def _apply(self,
-            command: Command,
-            state: DialogueState,
-            flow_catalog: FlowCatalog
-    )-> TaskEvent:
+               command: Command,
+               state: DialogueState,
+               flow_catalog: FlowCatalog
+               ) -> TaskEvent:
+        """
+        执行意图的方法
+        :param commands: llm意图识别返回结果列表
+        :param state: 对话运行状态
+        :param flows: 任务流程与槽位数据
+        :return: list[TaskEvent]: 任务列表
+        """
         # 判断command类型
         # start_flow 开始流程
         if isinstance(command, StartFlowCommand):
@@ -45,11 +60,11 @@ class CommandProcessor:
             flow_id = command.flow
             # 根据flow_id获取对应flow数据
             # 在FlowCatalog增加根据流程id查询流程的方法
-            flow:Flow = flow_catalog.get_flow_by_id(flow_id)
+            flow: Flow = flow_catalog.get_flow_by_id(flow_id)
 
             # 从Flow里面找到类型是start步骤，把对应id获取到
             # Flow类增加 获取开始步骤数据
-            start_step:StartFlowStep = flow.get_start_step()
+            start_step: StartFlowStep = flow.get_start_step()
 
             # 封装数据到TaskInstance
             task = TaskInstance(
@@ -61,7 +76,7 @@ class CommandProcessor:
             # TaskInstance =》 TaskState =》 DialogueState
             # 把TaskInstance封装方法
             # TaskState增加start方法
-            event:TaskEvent = state.tasks.start(task)
+            event: TaskEvent = state.tasks.start(task)
             return event
 
         # {"command": "set_slots", "slots": {"<slot_name>": "<value>"}}

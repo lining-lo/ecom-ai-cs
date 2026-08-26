@@ -1,7 +1,9 @@
 """
   @Author:lining-lo
   @Time:2026/8/17
-  @Desc: 
+  @Desc:对话运行状态模型，
+        定义会话、轮次、焦点对象、任务实例与任务状态，
+        管理会话历史以及任务启动、切换、暂停、取消、恢复的状态流转
 """
 import time
 import uuid
@@ -10,50 +12,41 @@ from app.domain.message import UserMessage, BotMessage
 from app.task.lifecycle.models import TaskEvent, TaskSwitched, TaskStarted, TaskRef, TaskCanceled, TaskResumed
 
 
-# 一轮对话，一个问题对应一个或者多个回答
 @dataclass
 class Turn:
+    """一轮对话信息，一个问题对应一个或者多个回答"""
     turn_id: str
-    # 用户提问
-    user_message: UserMessage
-    # 客服回复
-    bot_message: list[BotMessage] = field(default_factory=list)
+    user_message: UserMessage  # 用户提问
+    bot_message: list[BotMessage] = field(default_factory=list)  # 客服回复
 
 
-# 会话对象
 @dataclass
 class Session:
-    # session的id，区别不同session
-    session_id: str
-    # session创建时间戳
-    started_at: float
-    # session最后一次活跃时间
-    last_activity_at: float
-    # 关闭时间
-    closed_at: float
-    # 每个session会话多轮对话
-    turns: list[Turn] = field(default_factory=list)
+    """会话对象"""
+    session_id: str  # session的id，区别不同session
+    started_at: float  # session创建时间戳
+    last_activity_at: float  # session最后一次活跃时间
+    closed_at: float | None = None  # 关闭时间
+    turns: list[Turn] = field(default_factory=list)  # 每个session会话多轮对话
 
 
-# 对象类型消息
 @dataclass
 class FocusedObject:
+    """对象类型消息"""
     type: str
     id: str
     title: str | None = None
     attributes: dict = field(default_factory=dict)
 
 
-# 三种能力都有数据：任务流程、知识问答、闲聊
 @dataclass
 class SharedState:
-    # 对象类型消息
-    focused_object: FocusedObject | None = None
-    # 多个会话数据
-    sessions: list[Session] | None = None
+    """三种能力都有数据：任务流程、知识问答、闲聊"""
+    focused_object: FocusedObject | None = None  # 对象类型消息
+    sessions: list[Session] = field(default_factory=list)  # 多个会话数据
 
-    # 创建新session
     def create_session(self):
+        """创建会话对象的方法"""
         now = time.time()
         session = Session(
             session_id=str(uuid.uuid4()),
@@ -63,53 +56,42 @@ class SharedState:
         # 创建session对象放到state里面
         self.sessions.append(session)
 
-    # 关闭当前session
     def close_current_session(self):
+        """关闭当前会话"""
         self.sessions[-1].closed_at = time.time()
 
 
-# 某个任务流程步骤相关数据
 @dataclass
 class TaskInstance:
-    # 流程id，对应yaml文件  refund_request
-    flow_id: str
-    # 步骤id ,比如 start
-    step_id: str | None
-    # 当前任务id
-    task_id: str
-    # 槽位数据字典  {order_number : a10098765}
-    slots: dict = field(default_factory=dict)
+    """某个任务流程步骤相关数据"""
+    flow_id: str  # 流程id，对应yaml文件  refund_request
+    step_id: str | None = None  # 步骤id ,比如 start
+    task_id: str = field(default_factory=lambda: str(uuid.uuid4()))  # 当前任务id
+    slots: dict = field(default_factory=dict)  # 槽位数据字典  {order_number : a10098765}
 
-    # task_id: str
-    # flow_id: str
     def to_ref(self) -> TaskRef:
+        """将TaskInstance转化为TaskRef"""
         return TaskRef(task_id=self.task_id,
                        flow_id=self.flow_id, )
 
 
-# 任务流程特有数据，流程步骤数据
 @dataclass
 class TaskState:
-    # 当前正在运行（活跃）的任务
-    active: TaskInstance | None = None
-    # 中断（暂停）的任务
-    paused: list[TaskInstance] = field(default_factory=list)
+    """任务流程特有数据，流程步骤数据"""
+    active: TaskInstance | None = None  # 当前正在运行（活跃）的任务
+    paused: list[TaskInstance] = field(default_factory=list)  # 中断（暂停）的任务
 
-    # 把数据封装DialogueState里面
-    # TaskInstance =》 TaskState =》 DialogueState
     def start(self, task: TaskInstance) -> TaskEvent:
+        """启动任务流程的方法"""
         # 判断当前是否有活跃任务
         if self.active:  # 有活跃
             # 任务变化 TaskSwitched
             previous = self.active.to_ref()
             # 暂停活跃任务
             self.paused.append(self.active)
-
             # 当前执行任务设置活跃任务
             self.active = task
-
             current = self.active.to_ref()
-
             return TaskSwitched(previous=previous,
                                 current=current)
         else:
@@ -169,9 +151,7 @@ class TaskState:
 
 @dataclass
 class DialogueState:
-    # 用户id
-    sender_id: str
-    # 三种能力都有数据：任务流程、知识问答、闲聊
-    shared: SharedState = field(default_factory=SharedState)
-    # 任务流程特有数据，流程步骤数据
-    tasks: TaskState = field(default_factory=TaskState)
+    """对话运行状态类"""
+    sender_id: str  # 用户id
+    shared: SharedState = field(default_factory=SharedState)  # 三种能力都有数据：任务流程、知识问答、闲聊
+    tasks: TaskState = field(default_factory=TaskState)  # 任务流程特有数据，流程步骤数据

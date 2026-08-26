@@ -1,15 +1,17 @@
 """
   @Author:lining-lo
   @Time:2026/8/17
-  @Desc: 
+  @Desc:对话处理类，对话系统顶层入口；
+        管理会话过期，处理文本/对象两类消息，完成意图规划、计划校验，
+        调度任务处理器执行业务流程，输出机器人回复
 """
 import time
 import uuid
 from dataclasses import asdict
-
 from app.domain.message import UserMessage, ProcessResult, MessageType, BotMessage
 from app.domain.state import DialogueState, Turn, FocusedObject
 from app.plan.models import TurnPlan, TurnPlanValidationResult
+from app.plan.turn_plan import TurnPlanner
 from app.plan.turn_plan_validation import TurnPlanValidation
 from app.task.command.models import SetSlotsCommand
 from app.task.flow.models import Flow
@@ -17,18 +19,25 @@ from app.task.flow.steps import FlowStep, CollectSlotStep
 from app.task.handler import TaskHandler
 
 
-# 处理消息
 class DialogueEngine:
+    """对话处理类"""
+
     def __init__(self,
-                 turn_plan: TurnPlan,
+                 turn_planner: TurnPlanner,
                  turn_plan_validation: TurnPlanValidation,
                  task_handler: TaskHandler):
-        self._turn_plan = turn_plan
+        self._turn_planner = turn_planner
         self._turn_plan_validation = turn_plan_validation
         self._task_handler = task_handler
 
-    async def process_mesasge(self, state: DialogueState,
+    async def process_message(self, state: DialogueState,
                               user_message: UserMessage) -> ProcessResult:
+        """
+        处理对话的方法
+        :param state: 对话运行状态
+        :param user_message: 用户输入信息
+        :return: ProcessResult: service方法返回类型
+        """
         # 1 准备当前会话
         self._prepare_session(state)
 
@@ -55,8 +64,11 @@ class DialogueEngine:
             messages=messages
         )
 
-    # 1 准备当前session会话
     def _prepare_session(self, state: DialogueState):
+        """
+        准备当前session会话的方法
+        :param state: 对话运行状态类
+        """
         # 判断当前session存在
         # 不存在session
         if not state.shared.sessions:
@@ -78,16 +90,21 @@ class DialogueEngine:
                 # 更新最后活跃时间当前时间
                 current_session.last_activity_at = now
 
-    # 2 处理文本类型消息
     async def _execute_text_message(self,
                                     user_message: UserMessage,
                                     state: DialogueState) -> list[BotMessage]:
+        """
+        处理文本类型消息的方法
+        :param user_message: 用户输入信息
+        :param state: 对话运行状态类
+        :return: list[BotMessage]: 客服回复信息列表
+        """
         # 1 根据user_message文本提问信息，调用llm，进行意图识别
         # 识别执行哪个轨道：任务流程、知识检索、闲聊；
         # 如果任务流程，识别流程id
-        turnPlan: TurnPlan = await self._turn_plan.plan(user_message=user_message,
-                                                        state=state,
-                                                        flow_catalog=self._task_handler._flow_catalog)
+        turnPlan: TurnPlan = await self._turn_planner.plan(user_message=user_message,
+                                                           state=state,
+                                                           flow_catalog=self._task_handler._flow_catalog)
 
         # 2 对llm意图识别结果校验
         ## 比如识别有两个轨道，任务流程识别流程id不存在......
@@ -117,8 +134,8 @@ class DialogueEngine:
         if turnPlan.chitchat:
             pass
 
-    # 处理对象类型消息
     async def _execute_object_message(self, user_message, state):
+        """处理对象类型消息的方法"""
         # 1 把对象消息放到state里面 focused_object
         state.shared.focused_object = FocusedObject(
             **asdict(user_message.object)
@@ -127,9 +144,9 @@ class DialogueEngine:
         # 2 判断，是否填充槽位数据
         if self._can_fill_slots(state):
             if user_message.object.type == 'order':
-                slots = {'order_number':user_message.object.id}
+                slots = {'order_number': user_message.object.id}
             else:
-                slots = {'product_id':user_message.object.id}
+                slots = {'product_id': user_message.object.id}
 
             # 最终调用TaskHandler里面方法，传入command对象，对象类型消息处理
             # 没有调用意图识别组件，没有command
@@ -149,8 +166,8 @@ class DialogueEngine:
             # 反问澄清
             pass
 
-    # 是否填充槽数据
-    def _can_fill_slots(self, state:DialogueState)->bool:
+    def _can_fill_slots(self, state: DialogueState) -> bool:
+        """校验是否允许填充槽数据的方法"""
         # 1 判断当前是否有活跃任务
         active_task = state.tasks.active
         if not active_task:
@@ -159,19 +176,19 @@ class DialogueEngine:
         # 2 有活跃任务
         # 根据当前任务流程id，获取流程对象
         flow_id = active_task.flow_id
-        flow:Flow = self._task_handler._flow_catalog.get_flow_by_id(flow_id)
+        flow: Flow = self._task_handler._flow_catalog.get_flow_by_id(flow_id)
 
         # 从流程对象获取所有步骤列表，当前任务步骤id到列表找到步骤对应数据
-        step:FlowStep = flow.get_step_by_id(active_task.step_id)
+        step: FlowStep = flow.get_step_by_id(active_task.step_id)
 
         # # 判断当前步骤是否collect类型
         if not isinstance(step, CollectSlotStep):
             return False
 
-        if (step.slot_name=='order_number') and (state.shared.focused_object.type == 'order'):
+        if (step.slot_name == 'order_number') and (state.shared.focused_object.type == 'order'):
             return True
 
-        if (step.slot_name=='product_id') and (state.shared.focused_object.type == 'product'):
+        if (step.slot_name == 'product_id') and (state.shared.focused_object.type == 'product'):
             return True
 
         return False

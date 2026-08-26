@@ -1,13 +1,14 @@
 """
   @Author:lining-lo
   @Time:2026/8/23
-  @Desc: 
+  @Desc:任务流程执行器，
+        驱动Flow各个步骤流转；处理收集槽位、接口动作调用、条件分支跳转，
+        渲染生成Bot回复消息，完成任务流程推进
 """
-from app.task.action.base import ActionCall, ActionResult
-from app.task.action.runner import ActionRunner
 from app.domain.message import UserMessage, BotMessage
 from app.domain.state import DialogueState
-# from app.task.action.base import ActionCall
+from app.task.action.base import ActionCall, ActionResult
+from app.task.action.runner import ActionRunner
 from app.task.flow.links import FlowStepLink, ConditionalLink, FallbackLink
 from app.task.flow.models import FlowCatalog, Flow
 from app.task.flow.steps import FlowStep, StartFlowStep, ResponseFlowStep, CollectSlotStep, ActionFlowStep, \
@@ -15,10 +16,11 @@ from app.task.flow.steps import FlowStep, StartFlowStep, ResponseFlowStep, Colle
 from app.task.response.renderer import ResponseRenderer
 
 
-# TaskHandler组件，推进业务里面步骤
 class FlowExecutor:
-    def __init__(self,response_renderer:ResponseRenderer,
-                 action_runner:ActionRunner):
+    """任务流程执行器"""
+
+    def __init__(self, response_renderer: ResponseRenderer,
+                 action_runner: ActionRunner):
         self._response_renderer = response_renderer
         self._action_runner = action_runner
 
@@ -26,6 +28,13 @@ class FlowExecutor:
                        state: DialogueState,
                        user_message: UserMessage,
                        flows: FlowCatalog) -> list[BotMessage]:
+        """
+        执行任务流程的主方法
+        :param state: 对话运行状态
+        :param user_message: 用户输入信息
+        :param flows: 任务流程与槽位数据模型
+        :return: list[BotMessage]:客服回复信息列表
+        """
         bot_messages: list[BotMessage] = []
 
         # 判断当前是否有活跃任务,没有
@@ -37,11 +46,11 @@ class FlowExecutor:
         for _ in range(100):
             # 推进步骤实现，获取步骤是什么
             # 1 根据流程id获取流程对象
-            flow:Flow = flows.get_flow_by_id(
+            flow: Flow = flows.get_flow_by_id(
                 state.tasks.active.flow_id)
             # 2 在获取流程对象里面，根据步骤id获取步骤对应数据
-            step:FlowStep = flow.get_step_by_id(
-                    state.tasks.active.step_id)
+            step: FlowStep = flow.get_step_by_id(
+                state.tasks.active.step_id)
             # 3 判断步骤类型，不同类型进行不同处理
             """
                 start类型步骤处理流程：
@@ -68,7 +77,7 @@ class FlowExecutor:
                 # 把渲染之后数据放到list里面
                 bot_messages.append(bot_message)
                 # 推进下一步
-                self._run_step(step,state)
+                self._run_step(step, state)
                 continue
 
             """
@@ -76,13 +85,13 @@ class FlowExecutor:
             """
             if isinstance(step, CollectSlotStep):
                 # need_input是bool  true:需要用户输入，没有槽位数据   false：有槽位数据
-                need_input = self._run_collect_step(step,state,
-                                       user_message,
-                                       bot_messages)
-                if need_input: # true需要用户输入，没有槽位数据
+                need_input = await self._run_collect_step(step, state,
+                                                          user_message,
+                                                          bot_messages)
+                if need_input:  # true需要用户输入，没有槽位数据
                     return bot_messages
-                else: # 有槽位数据，推进下一步
-                    self._run_step(step,state)
+                else:  # 有槽位数据，推进下一步
+                    self._run_step(step, state)
                     continue
 
             """
@@ -120,8 +129,12 @@ class FlowExecutor:
 
         return bot_messages
 
-    def _run_step(self,step:FlowStep,state:DialogueState):
-        """往后推进步骤"""
+    def _run_step(self, step: FlowStep, state: DialogueState):
+        """
+        推进任务流程的方法
+        :param step: 任务步骤
+        :param state: 对话运行状态
+        """
         # 把当前步骤的next值设置当前active里面步骤id
         # next_step_id = step.next
         # step.next有两种情况 字符串  列表 if then else
@@ -129,8 +142,14 @@ class FlowExecutor:
         state.tasks.active.step_id = next_step_id
 
     def _select_next_step(self,
-                          next:list[FlowStepLink],
-                          state:DialogueState)->str:
+                          next: list[FlowStepLink],
+                          state: DialogueState) -> str:
+        """
+
+        :param next:
+        :param state:
+        :return:
+        """
         # 如果next是一个字符串
         if len(next) == 1:
             return next[0].target
@@ -141,7 +160,7 @@ class FlowExecutor:
                 # 返回bool
                 result = bool(eval(link.condition,
                                    {},
-                                   {"slots":state.tasks.active.slots}))
+                                   {"slots": state.tasks.active.slots}))
                 if result:
                     return link.target
                 continue
@@ -150,25 +169,25 @@ class FlowExecutor:
 
     # 处理collect类型步骤
     async def _run_collect_step(self,
-                          step:CollectSlotStep,
-                          state:DialogueState,
-                          user_message:UserMessage,
-                          bot_messages:list[BotMessage])->bool:
+                                step: CollectSlotStep,
+                                state: DialogueState,
+                                user_message: UserMessage,
+                                bot_messages: list[BotMessage]) -> bool:
         # 1 从当前活跃任务获取槽位数据
-        slots:dict = state.tasks.active.slots
+        slots: dict = state.tasks.active.slots
         slot_value = slots.get(step.slot_name)
 
         # 2 如果当前活跃任务获取不到槽位数据，从聚焦对象获取槽位数据
         if not slot_value:
             # 从聚焦对象获取槽位数据
-            self.get_slot_data_focused_object(step,state)
+            self.get_slot_data_focused_object(step, state)
 
         # 3 如果上面两个步骤执行之后，槽位数据都获取不到，给用户返回信息
         # true需要用户输入，没有槽位数据
         slots_value = state.tasks.active.slots.get(step.slot_name)
         if not slots_value:
             bot_message = await self._response_renderer.render(
-                step.template,state,user_message)
+                step.template, state, user_message)
             bot_messages.append(bot_message)
             return True
 
@@ -182,8 +201,8 @@ class FlowExecutor:
             # 6 如果没有validation校验，直接推进到下一步
             else:
                 # 7 如果有validation校验，判断校验条件是否成立，方法eval
-                result = bool(eval(step.validation.condition,{},
-                          {'slots':state.tasks.active.slots}))
+                result = bool(eval(step.validation.condition, {},
+                                   {'slots': state.tasks.active.slots}))
 
                 # 8 如果校验成立，推进下一步
                 if result:
@@ -193,7 +212,7 @@ class FlowExecutor:
                 else:
                     # 从槽删除数据
                     state.tasks.active.slots.pop(step.slot_name)
-                    bot_message = self._response_renderer.render(
+                    bot_message = await self._response_renderer.render(
                         step.validation.failure_template, state, user_message)
                     bot_messages.append(bot_message)
                     return True
@@ -207,16 +226,14 @@ class FlowExecutor:
         # 2 focused_object对象不为空
         # focused_object 目前有两种  order  product
         # 对象类型 order
-        if (step.slot_name=='order_number'
-                and state.shared.focused_object.type=='order'):
+        if (step.slot_name == 'order_number'
+                and state.shared.focused_object.type == 'order'):
             state.tasks.active.slots.update(
                 {step.slot_name: state.shared.focused_object.id})
             return
 
-        if (step.slot_name=='product_id'
-                and state.shared.focused_object.type=='product'):
+        if (step.slot_name == 'product_id'
+                and state.shared.focused_object.type == 'product'):
             state.tasks.active.slots.update(
                 {step.slot_name: state.shared.focused_object.id})
             return
-
-

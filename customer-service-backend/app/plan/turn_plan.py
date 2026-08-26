@@ -1,7 +1,9 @@
 """
   @Author:lining-lo
   @Time:2026/8/24
-  @Desc:
+  @Desc:意图规划组件，
+        组装对话上下文与业务流程元数据，调
+        用LLM输出结构化JSON，解析生成TurnPlan，完成用户消息意图识别
 """
 import json
 from dataclasses import asdict
@@ -16,12 +18,18 @@ from app.task.flow.models import FlowCatalog, Flow
 from app.utils.llm_client import llm
 
 
-# 意图识别组件
 class TurnPlanner:
-
+    """意图识别组件"""
     async def plan(self, user_message: UserMessage,
                    state: DialogueState,
                    flow_catalog: FlowCatalog) -> TurnPlan:
+        """
+        执行意图识别的方法
+        :param user_message: 用户输入信息
+        :param state: 对话运行状态
+        :param flow_catalog: 任务流程与槽位数据模型
+        :return:TurnPlan: 意图识别模型
+        """
         # 1 加载提示词模版
         prompt_text = load_prompt('turn_plan')
         prompt = PromptTemplate.from_template(

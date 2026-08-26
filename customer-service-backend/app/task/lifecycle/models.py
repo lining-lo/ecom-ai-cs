@@ -1,7 +1,9 @@
 """
   @Author:lining-lo
   @Time:2026/8/21
-  @Desc: 
+  @Desc:任务生命周期事件数据模型，
+        定义启动、切换、恢复、取消任务事件，
+        统一用TaskEvent聚合，承载任务状态变更消息
 """
 from dataclasses import dataclass
 from typing import TypeAlias
@@ -9,36 +11,32 @@ from typing import TypeAlias
 
 @dataclass
 class TaskRef:
+    """任务生命周期事件数据模型"""
     task_id: str
     flow_id: str
 
-# 开始任务变化
 @dataclass
 class TaskStarted:
+    """开始任务变化"""
     task: TaskRef
 
-# 切换任务变化
 @dataclass
 class TaskSwitched:
+    """切换任务变化"""
     previous: TaskRef
     current: TaskRef
 
-# 恢复任务变化
 @dataclass
 class TaskResumed:
+    """恢复任务变化"""
     task: TaskRef
 
-# 取消任务变化
 @dataclass
 class TaskCanceled:
+    """取消任务变化"""
     task: TaskRef
 
-# def test() -> TaskStarted | TaskSwitched | TaskResumed | TaskCanceled:
-#     pass
-#
-# def test1() -> TaskEvent:
-#     pass
-
+# 取别名
 TaskEvent: TypeAlias = (
         TaskStarted
         | TaskSwitched

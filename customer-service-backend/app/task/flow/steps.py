@@ -1,7 +1,9 @@
 """
   @Author:lining-lo
   @Time:2026/8/19
-  @Desc:
+  @Desc:流程步骤数据模型，
+        定义各类流程步骤实体，实现YAML字典到步骤对象的反序列化，
+        处理静态、条件、兜底跳转链接解析
 """
 from dataclasses import dataclass, field
 from enum import Enum
@@ -17,6 +19,7 @@ class SlotValidation:
 
 
 class FlowStepType(Enum):
+    """流程步骤枚举类"""
     START = "start"
     ACTION = "action"
     RESPONSE = "response"
@@ -26,6 +29,7 @@ class FlowStepType(Enum):
 
 @dataclass
 class FlowStep:
+    """流程步骤数据模型"""
     id: str
     type: FlowStepType
     next: list[FlowStepLink] = field(default_factory=list)
@@ -33,6 +37,7 @@ class FlowStep:
 
     @classmethod
     def from_dict(cls, flow_step_data: dict[str, Any]) -> "FlowStep":
+        """转化为流程步骤数据模型方法"""
         flow_type = flow_step_data['type']
         # type= action   得到类 ActionFlowStep
         clz = TYPE_TO_STEP_CLASS[flow_type]
@@ -51,9 +56,11 @@ class FlowStep:
 
     @classmethod
     def _build_links(cls, next_data: str | list[dict]) -> list[FlowStepLink]:
+        """构建下一步流程方法"""
+        # next值字符串，无条件跳转
         if isinstance(next_data, str):
             return [StaticLink(target=next_data)]
-        else:
+        else:  # 有条件跳转
             link_list: list[FlowStepLink] = []
             for link_data in next_data:
                 if 'if' in link_data:
@@ -65,6 +72,8 @@ class FlowStep:
 
 @dataclass
 class StartFlowStep(FlowStep):
+    """开始步骤"""
+
     @classmethod
     def from_dict(cls, flow_step_data: dict[str, Any]) -> "StartFlowStep":
         return cls(**FlowStep.base_fields(flow_step_data))
@@ -72,6 +81,7 @@ class StartFlowStep(FlowStep):
 
 @dataclass
 class ActionFlowStep(FlowStep):
+    """业务动作步骤"""
     action: str = ""
     args: dict[str, Any] = field(default_factory=dict)
 
@@ -86,16 +96,23 @@ class ActionFlowStep(FlowStep):
 
 @dataclass
 class ResponseFlowStep(FlowStep):
+    """回复步骤"""
     template: ResponseTemplate = field(default_factory=ResponseTemplate)
 
     @classmethod
     def from_dict(cls, flow_step_data: dict[str, Any]) -> "ResponseFlowStep":
         # todo: 加载逻辑
-        pass
+        # pass
+        return cls(
+            **FlowStep.base_fields(flow_step_data),
+            template=ResponseTemplate.from_dict(
+                flow_step_data['template'])
+        )
 
 
 @dataclass
 class CollectSlotStep(FlowStep):
+    """收集槽位数据步骤"""
     slot_name: str = ""
     template: ResponseTemplate = field(default_factory=ResponseTemplate)
     validation: SlotValidation | None = None
@@ -103,17 +120,32 @@ class CollectSlotStep(FlowStep):
     @classmethod
     def from_dict(cls, flow_step_data: dict[str, Any]) -> "CollectSlotStep":
         # todo: 加载逻辑
-        pass
+        # pass
+        validation = None
+        if 'validation' in flow_step_data:
+            validation = SlotValidation(
+                condition=flow_step_data['validation']['condition'],
+                failure_template=ResponseTemplate.from_dict(
+                    flow_step_data['validation']
+                    ['failure_template'])
+            )
+
+        return cls(
+            **FlowStep.base_fields(flow_step_data),
+            slot_name=flow_step_data['slot_name'],
+            template=ResponseTemplate.from_dict(flow_step_data['template']),
+            validation=validation
+        )
 
 
 @dataclass
 class EndFlowStep(FlowStep):
-
+    """结束步骤"""
     @classmethod
     def from_dict(cls, flow_step_data: dict[str, Any]) -> "EndFlowStep":
         return cls(**FlowStep.base_fields(flow_step_data))
 
-
+# 步骤集合
 TYPE_TO_STEP_CLASS = {
     'start': StartFlowStep,
     'collect': CollectSlotStep,

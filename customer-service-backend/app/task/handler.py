@@ -31,12 +31,12 @@ class TaskHandler:
                      state: DialogueState,
                      user_message: UserMessage) -> list[BotMessage]:
         # 1 接受意图识别结果，根据结果使用CommandProcessor更新DialogueState
-        task_events: list[TaskEvent] = self._command_processor.run(commands=commands,
+        task_events: list[TaskEvent] = await self._command_processor.run(commands=commands,
                                                                    state=state,
                                                                    flows=self._flow_catalog)
 
         # 2 根据CommandProcessor返回状态变化数据，调用TaskLifecycleResponder，生成中文提示
-        messages: list[BotMessage] = self._task_lifecycle.respond(task_events)
+        messages: list[BotMessage] = await self._task_lifecycle.respond(task_events)
 
         # 3 调用FlowExecutor推进流程的步骤
         result: list[BotMessage] = await self._flow_executor.run_task(state=state,

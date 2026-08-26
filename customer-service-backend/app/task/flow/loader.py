@@ -1,7 +1,9 @@
 """
   @Author:lining-lo
   @Time:2026/8/19
-  @Desc:
+  @Desc:YAML流程配置加载器，
+        解析配置文件生成FlowCatalog流程目录，
+        支持单文件、多文件加载合并，完成配置到领域对象的转换
 """
 from pathlib import Path
 import yaml
@@ -10,7 +12,10 @@ from app.task.flow.steps import FlowStep
 
 
 class FlowLoader:
+    """YAML流程配置加载器"""
+
     def load(self, path: Path) -> FlowCatalog:
+        """加载YAML流程配置的方法"""
         # 使用pyyaml的方法读取yaml文件
         flow_data = path.read_text(encoding="utf-8")
         flow_dict = yaml.safe_load(flow_data)
@@ -23,8 +28,8 @@ class FlowLoader:
 
         return FlowCatalog(flows=flows, slots=slots)
 
-    # 槽位数据封装过程
     def _load_slots(self, slots_data: dict[str, dict]) -> dict[str, FlowSlot]:
+        """槽位数据封装方法"""
         slots: dict[str, FlowSlot] = {}
         # 遍历
         for slot_name, slot_data in slots_data.items():
@@ -34,9 +39,9 @@ class FlowLoader:
             )
         return slots
 
-    # 加载流程数据
     def _load_flows(self, flows_data: dict[str, dict],
                     slots: dict[str, FlowSlot]) -> dict[str, Flow]:
+        """流程数据封装方法"""
         flows: dict[str, Flow] = {}
         # 遍历
         for flow_id, flow_data in flows_data.items():
@@ -67,8 +72,8 @@ class FlowLoader:
             flows[flow_id] = flow
         return flows
 
-    # 加载多个yaml配置文件
-    def load_many(self, paths:list[Path])->FlowCatalog:
+    def load_many(self, paths: list[Path]) -> FlowCatalog:
+        """加载多个yaml流程配置文件"""
         flows: dict[str, Flow] = {}
         slots: dict[str, FlowSlot] = {}
 
@@ -81,6 +86,7 @@ class FlowLoader:
             flows.update(catalog.flows)
             slots.update(catalog.slots)
         return FlowCatalog(flows=flows, slots=slots)
+
 
 if __name__ == "__main__":
     loader = FlowLoader()

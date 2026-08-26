@@ -1,12 +1,15 @@
 """
   @Author:lining-lo
   @Time:2026/8/16
-  @Desc:封装LLM大模型客户端
+  @Desc:封装LLM大模型客户端，
+        基于langchain初始化dashscope兼容OpenAI协议的对话模型，
+        全局生成llm单例对象，供上游各模块直接调用
 """
 import os
 from langchain.chat_models import init_chat_model
 from app.conf.config import settings
 
+# LM大模型客户端实例
 llm = init_chat_model(
     model=settings.llm_model,
     model_provider='openai',

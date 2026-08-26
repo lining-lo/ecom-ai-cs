@@ -1,7 +1,9 @@
 """
   @Author:lining-lo
   @Time:2026/8/24
-  @Desc: 
+  @Desc:意图规划校验组件，
+        校验意图识别出来结果，禁止同时多轨道、无轨道；
+        校验task指令的流程ID、任务ID有效性，返回校验状态与澄清原因
 """
 from app.domain.state import DialogueState
 from app.plan.models import TurnPlan, TurnPlanValidationResult, ClarifyReason, TaskTurnPlan
@@ -9,12 +11,20 @@ from app.task.command.models import StartFlowCommand, ResumeTaskCommand, CancelT
 from app.task.flow.models import FlowCatalog
 
 
-# 意图识别校验
 class TurnPlanValidation:
+    """意图规划校验组件"""
+
     def validate(self,
                  turn_plan: TurnPlan,
                  state: DialogueState,
                  flow_catalog: FlowCatalog) -> TurnPlanValidationResult:
+        """
+        执行意图规划校验的方法
+        :param turn_plan: 意图识别模型
+        :param state: 对话运行状态
+        :param flow_catalog: 任务流程与槽位数据模型
+        :return: TurnPlanValidationResult: 意图识别的结果模型
+        """
         # 判断是否多个轨道
         active_tracks: list[str] = []
         if turn_plan.task is not None:
@@ -41,17 +51,23 @@ class TurnPlanValidation:
         active_track = active_tracks[0]
         # 根据不同轨道做不同校验
         if active_track == "task":
-            self._validate_task_plan()
+            self._validate_task_plan(turn_plan.task,
+                                     state,
+                                     flow_catalog)
         if active_track == "knowledge":
             self._validate_knowledge_plan()
 
         return TurnPlanValidationResult(valid=True)
 
-    # 对task意图识别校验
-    # commands: list[Command]
     def _validate_task_plan(self, task: TaskTurnPlan,
                             state: DialogueState,
                             flow_catalog: FlowCatalog):
+        """
+        对任务意图识别校验的方法
+        :param task: 任务意图
+        :param state: 对话运行状态
+        :param flow_catalog: 任务流程与槽位数据模型
+        """
         # task:TaskTurnPlan => commands: list[Command]
         if not task.commands:
             return TurnPlanValidationResult(
@@ -105,4 +121,5 @@ class TurnPlanValidation:
         return TurnPlanValidationResult(valid=True)
 
     def _validate_knowledge_plan(self):
+        """对知识库查询意图识别校验的方法"""
         pass
