@@ -11,6 +11,7 @@ from langchain_core.output_parsers import JsonOutputParser
 from langchain_core.prompts import PromptTemplate
 from app.domain.message import UserMessage
 from app.domain.state import DialogueState
+from app.knowledge.intents import KnowledgeIntent
 from app.plan.models import TurnPlan
 from app.prompts.history_builder import HistoryBuilder
 from app.prompts.loader import load_prompt
@@ -20,9 +21,14 @@ from app.utils.llm_client import llm
 
 class TurnPlanner:
     """意图识别组件"""
-    async def plan(self, user_message: UserMessage,
-                   state: DialogueState,
-                   flow_catalog: FlowCatalog) -> TurnPlan:
+
+    async def plan(
+            self,
+            user_message: UserMessage,
+            state: DialogueState,
+            flow_catalog: FlowCatalog,
+            knowledge_intents: dict[str, KnowledgeIntent]
+    ) -> TurnPlan:
         """
         执行意图识别的方法
         :param user_message: 用户输入信息
@@ -62,6 +68,12 @@ class TurnPlanner:
              }
             for flow in flows.values()
         ]
+        # 知识检索数据  id="refund_policy", description="退款政策咨询"
+        knowledge_intents_json = json.dumps(
+            [
+                {"id": intent.id, "description": intent.description}
+                for intent in knowledge_intents.values()
+            ], ensure_ascii=False)
         # 调用方得到结果
         res = await chain.ainvoke({
             "flows_json": flows_json,
@@ -69,8 +81,7 @@ class TurnPlanner:
             "focused_object_json": focused_object_json,
             "conversation_history": conversation_history,
             "user_message": user_message,
-            # todo 后面完善，目前{}
-            "knowledge_intents_json": {},
+            "knowledge_intents_json": knowledge_intents_json,
         })
 
         # 4 把llm返回结果封装TurnPlan

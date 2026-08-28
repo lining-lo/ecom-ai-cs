@@ -6,7 +6,8 @@
         校验task指令的流程ID、任务ID有效性，返回校验状态与澄清原因
 """
 from app.domain.state import DialogueState
-from app.plan.models import TurnPlan, TurnPlanValidationResult, ClarifyReason, TaskTurnPlan
+from app.knowledge.intents import KnowledgeIntent, KNOWLEDGE_INTENTS
+from app.plan.models import TurnPlan, TurnPlanValidationResult, ClarifyReason, TaskTurnPlan, KnowledgeTurnPlan
 from app.task.command.models import StartFlowCommand, ResumeTaskCommand, CancelTaskCommand
 from app.task.flow.models import FlowCatalog
 
@@ -47,15 +48,23 @@ class TurnPlanValidation:
                 valid=False,
                 reason=ClarifyReason.MULTIPLE_TRACKS)
 
+        # 识别多个轨道
+        if len(active_tracks) > 1:
+            return TurnPlanValidationResult(
+                valid=False,
+                reason=ClarifyReason.MULTIPLE_TRACKS)
+
         # 只有一个轨道
         active_track = active_tracks[0]
         # 根据不同轨道做不同校验
         if active_track == "task":
-            self._validate_task_plan(turn_plan.task,
-                                     state,
-                                     flow_catalog)
+            return self._validate_task_plan(turn_plan.task, state, flow_catalog)
         if active_track == "knowledge":
-            self._validate_knowledge_plan()
+            return self._validate_knowledge_plan(
+                knowledge=turn_plan.knowledge,
+                state=state,
+                knowledge_intents=KNOWLEDGE_INTENTS,
+            )
 
         return TurnPlanValidationResult(valid=True)
 
@@ -120,6 +129,38 @@ class TurnPlanValidation:
 
         return TurnPlanValidationResult(valid=True)
 
-    def _validate_knowledge_plan(self):
-        """对知识库查询意图识别校验的方法"""
-        pass
+    def _validate_knowledge_plan(
+            self,
+            knowledge: KnowledgeTurnPlan,
+            state: DialogueState,
+            knowledge_intents: dict[str, KnowledgeIntent]
+    ) -> TurnPlanValidationResult:
+        """
+        对知识库查询意图识别校验的方法
+        :param knowledge: 知识查询意图
+        :param state: 对话运行状态
+        :param knowledge_intents: 知识意图字典
+        :return: 意图识别校验的结果
+        """
+        # 没有解析出任何知识意图
+        if not knowledge.intents:
+            return TurnPlanValidationResult(valid=False, reason=ClarifyReason.MISSING_KNOWLEDGE_INTENT)
+
+        for intent in knowledge.intents:
+            # 意图不在配置表，未知知识意图
+            if intent not in knowledge_intents:
+                return TurnPlanValidationResult(valid=False, reason=ClarifyReason.UNKNOWN_KNOWLEDGE_INTENT)
+
+            knowledge_intent: KnowledgeIntent = knowledge_intents[intent]
+            required_object = knowledge_intent.requires_object
+            focused_object = state.shared.focused_object
+
+            if required_object:
+                if focused_object is None:
+                    # 完全缺少焦点业务对象
+                    return TurnPlanValidationResult(valid=False, reason=ClarifyReason.MISSING_FOCUSED_OBJECT)
+                if required_object != focused_object.type:
+                    # 对象存在，但类型不匹配，需要用户补充对应意图
+                    return TurnPlanValidationResult(valid=False, reason=ClarifyReason.OBJECT_REQUIRES_INTENT)
+
+        return TurnPlanValidationResult(valid=True)

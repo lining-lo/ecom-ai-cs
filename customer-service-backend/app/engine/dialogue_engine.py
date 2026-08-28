@@ -13,7 +13,7 @@ from app.clarify.handler import ClarifyResponder
 from app.domain.message import UserMessage, ProcessResult, MessageType, BotMessage
 from app.domain.state import DialogueState, Turn, FocusedObject
 from app.knowledge.handler import KnowledgeHandler
-from app.plan.models import TurnPlan, TurnPlanValidationResult
+from app.plan.models import TurnPlan, TurnPlanValidationResult, ClarifyReason
 from app.plan.turn_plan import TurnPlanner
 from app.plan.turn_plan_validation import TurnPlanValidation
 from app.task.command.models import SetSlotsCommand
@@ -111,9 +111,12 @@ class DialogueEngine:
         # 1 根据user_message文本提问信息，调用llm，进行意图识别
         # 识别执行哪个轨道：任务流程、知识检索、闲聊；
         # 如果任务流程，识别流程id
-        turnPlan: TurnPlan = await self._turn_planner.plan(user_message=user_message,
-                                                           state=state,
-                                                           flow_catalog=self._task_handler._flow_catalog)
+        turnPlan: TurnPlan = await self._turn_planner.plan(
+            user_message=user_message,
+            state=state,
+            flow_catalog=self._task_handler._flow_catalog,
+            knowledge_intents=self._knowledge_handler.knowledge_intents
+        )
 
         # 2 对llm意图识别结果校验
         ## 比如识别有两个轨道，任务流程识别流程id不存在......
@@ -124,8 +127,11 @@ class DialogueEngine:
 
         # 3 校验失败，调用反问澄清组件
         if not validation.valid:
-            # todo 反问澄清组件
-            pass
+            return await self._clarify_responder.respond(
+                reason=validation.reason,
+                state=state,
+                user_message=user_message,
+            )
 
         # 4 校验成功，根据识别不同轨道，调用不同handler处理，
         # 识别任务流程，调用TaskHandler方法执行
@@ -136,12 +142,19 @@ class DialogueEngine:
                 user_message=user_message,
             )
 
-        # todo 知识检索
+        # 知识检索
         if turnPlan.knowledge:
-            pass
-        # todo 闲聊
-        if turnPlan.chitchat:
-            pass
+            return await self._knowledge_handler.handle(
+                knowledge_intents=turnPlan.knowledge.intents,
+                user_message=user_message,
+                state=state,
+            )
+
+        # 闲聊
+        return await self._chitchat_handler.handle(
+            user_message=user_message,
+            state=state
+        )
 
     async def _execute_object_message(self, user_message, state):
         """处理对象类型消息的方法"""
@@ -173,7 +186,11 @@ class DialogueEngine:
             )
         else:
             # 反问澄清
-            pass
+            return await self._clarify_responder.respond(
+                reason=ClarifyReason.OBJECT_REQUIRES_INTENT,
+                user_message=user_message,
+                state=state,
+            )
 
     def _can_fill_slots(self, state: DialogueState) -> bool:
         """校验是否允许填充槽数据的方法"""
