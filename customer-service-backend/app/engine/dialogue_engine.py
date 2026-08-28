@@ -8,8 +8,11 @@
 import time
 import uuid
 from dataclasses import asdict
+from app.chitchat.handler import ChitchatHandler
+from app.clarify.handler import ClarifyResponder
 from app.domain.message import UserMessage, ProcessResult, MessageType, BotMessage
 from app.domain.state import DialogueState, Turn, FocusedObject
+from app.knowledge.handler import KnowledgeHandler
 from app.plan.models import TurnPlan, TurnPlanValidationResult
 from app.plan.turn_plan import TurnPlanner
 from app.plan.turn_plan_validation import TurnPlanValidation
@@ -25,10 +28,16 @@ class DialogueEngine:
     def __init__(self,
                  turn_planner: TurnPlanner,
                  turn_plan_validation: TurnPlanValidation,
-                 task_handler: TaskHandler):
+                 task_handler: TaskHandler,
+                 knowledge_handler: KnowledgeHandler,
+                 chitchat_handler: ChitchatHandler,
+                 clarify_responder: ClarifyResponder):
         self._turn_planner = turn_planner
         self._turn_plan_validation = turn_plan_validation
         self._task_handler = task_handler
+        self._knowledge_handler = knowledge_handler
+        self._chitchat_handler = chitchat_handler
+        self._clarify_responder = clarify_responder
 
     async def process_message(self, state: DialogueState,
                               user_message: UserMessage) -> ProcessResult:

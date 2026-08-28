@@ -6,7 +6,14 @@
         返回完整对话引擎实例
 """
 from pathlib import Path
+from app.chitchat.handler import ChitchatHandler
+from app.clarify.handler import ClarifyResponder
 from app.engine.dialogue_engine import DialogueEngine
+from app.knowledge.handler import KnowledgeHandler
+from app.knowledge.intents import KNOWLEDGE_INTENTS
+from app.knowledge.provider import ApiProductProvider, ApiOrderProvider, FAQProvider, RAGProvider
+from app.knowledge.registry import KnowledgeProviderRegistry
+from app.knowledge.responder import KnowledgeResponder
 from app.plan.turn_plan import TurnPlanner
 from app.plan.turn_plan_validation import TurnPlanValidation
 from app.task.action.builder import register_service_action
@@ -50,8 +57,28 @@ def build_dialogue_engine() -> DialogueEngine:
         flow_executor=flow_executor,
         flow_catalog=flow_catalog)
 
+    provider_registry = KnowledgeProviderRegistry([
+        ApiProductProvider(),
+        ApiOrderProvider(),
+        FAQProvider(),
+        RAGProvider()])
+
+    knowledge_responder = KnowledgeResponder()
+
+    knowledge_handler = KnowledgeHandler(
+        knowledge_intents=KNOWLEDGE_INTENTS,
+        provider_registry=provider_registry,
+        knowledge_responder=knowledge_responder
+    )
+
+    clarify_responder = ClarifyResponder()
+    chitchat_handler = ChitchatHandler()
+
     return DialogueEngine(
         turn_planner=turn_planner,
         turn_plan_validation=turn_plan_validator,
-        task_handler=task_handler
+        task_handler=task_handler,
+        knowledge_handler=knowledge_handler,
+        chitchat_handler=chitchat_handler,
+        clarify_responder=clarify_responder
     )
