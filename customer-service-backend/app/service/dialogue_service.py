@@ -39,3 +39,8 @@ class DialogueService:
 
         # 4.返回本轮处理结果。
         return process_result
+
+    async def get_history_session_send_id(self, sender_id)->DialogueState:
+        """根据用户id查询历史记录"""
+        state:DialogueState = await self.dialogue_repository.load(sender_id)
+        return state

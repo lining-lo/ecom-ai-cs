@@ -33,3 +33,16 @@ class ChatResponse(BaseModel):
     sender_id: str  # 用户id
     message_id: str  # 消息唯一标识
     messages: list[ChatMessage]  # 返回的消息
+
+
+class HistoryMessage(BaseModel):
+    """单条历史记录"""
+    role: str  # user/bot
+    text: str | None = None
+    object: ChatObject | None = None
+
+
+class HistoryResponse(BaseModel):
+    """所有历史记录"""
+    sender_id: str
+    messages: list[HistoryMessage]
