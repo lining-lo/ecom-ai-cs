@@ -1,0 +1,117 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1200" height="540" viewBox="0 0 1200 540"
+     role="img" aria-labelledby="title desc"
+     font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <title id="title">系统架构：组件拓扑与分层职责</title>
+  <desc id="desc">前端、客服后端、模拟电商后端、MySQL、LLM API 五类组件协同；后端按 API、Service、Engine、Planning、Repository、基础设施六层组织。</desc>
+
+  <rect width="1200" height="540" rx="24" fill="#0D1117"/>
+
+  <g transform="translate(56 44)">
+    <text x="0" y="40" font-size="40" font-weight="700" fill="#F0F6FC">系统架构</text>
+    <text x="192" y="36" font-size="18" fill="#58A6FF"
+          font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">SYSTEM MAP</text>
+    <text x="0" y="76" font-size="21" fill="#8B949E">五类组件协同工作，后端内部按六层职责组织。</text>
+  </g>
+
+  <text x="56" y="128" font-size="17" fill="#6E7681"
+        font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">组件拓扑 · COMPONENTS</text>
+  <text x="720" y="128" font-size="17" fill="#6E7681"
+        font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">分层职责 · LAYERS</text>
+
+  <g transform="translate(56 148)">
+    <rect x="40" y="0" width="250" height="66" rx="12" fill="#161B22" stroke="#30363D" stroke-width="1.5"/>
+    <text x="165" y="28" font-size="15" text-anchor="middle" fill="#E6EDF3"
+          font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">customer-service-frontend</text>
+    <text x="165" y="50" font-size="17" text-anchor="middle" fill="#8B949E">客服前端页面 · Vue</text>
+
+    <rect x="40" y="150" width="250" height="66" rx="12" fill="#1C2128" stroke="#2F81F7" stroke-width="1.5"/>
+    <text x="165" y="178" font-size="15" text-anchor="middle" fill="#E6EDF3"
+          font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">customer-service-backend</text>
+    <text x="165" y="200" font-size="17" text-anchor="middle" fill="#C9D1D9">客服后端 · 核心调度 · FastAPI</text>
+
+    <rect x="390" y="150" width="250" height="66" rx="12" fill="#161B22" stroke="#30363D" stroke-width="1.5"/>
+    <text x="515" y="178" font-size="15" text-anchor="middle" fill="#E6EDF3"
+          font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">ecommerce-service-backend</text>
+    <text x="515" y="200" font-size="17" text-anchor="middle" fill="#8B949E">模拟电商后端</text>
+
+    <rect x="40" y="292" width="250" height="66" rx="12" fill="#161B22" stroke="#30363D" stroke-width="1.5"/>
+    <text x="165" y="320" font-size="18" text-anchor="middle" fill="#E6EDF3"
+          font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">MySQL</text>
+    <text x="165" y="342" font-size="17" text-anchor="middle" fill="#8B949E">对话状态持久化</text>
+
+    <rect x="390" y="292" width="250" height="66" rx="12" fill="#161B22" stroke="#30363D" stroke-width="1.5"/>
+    <text x="515" y="320" font-size="18" text-anchor="middle" fill="#E6EDF3"
+          font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">LLM API</text>
+    <text x="515" y="342" font-size="17" text-anchor="middle" fill="#8B949E">大语言模型接口</text>
+
+    <path d="M 165 66 L 165 150" stroke="#8B949E" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+    <text x="173" y="116" font-size="15" fill="#8B949E">聊天请求 / 历史</text>
+
+    <path d="M 290 50 L 390 150" stroke="#8B949E" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+    <text x="296" y="78" font-size="15" fill="#8B949E">订单/商品列表</text>
+
+    <path d="M 290 183 L 390 183" stroke="#8B949E" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+    <text x="296" y="174" font-size="15" fill="#8B949E">订单/物流/商品查询</text>
+
+    <path d="M 165 216 L 165 292" stroke="#8B949E" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+    <text x="182" y="266" font-size="15" fill="#8B949E">状态读写</text>
+
+    <path d="M 390 216 L 290 292" stroke="#8B949E" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+    <text x="300" y="306" font-size="15" fill="#8B949E">业务数据</text>
+
+    <path d="M 290 216 L 390 292" stroke="#8B949E" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+    <text x="230" y="232" font-size="15" fill="#8B949E">模型调用</text>
+  </g>
+
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M 0 0 L 8 4 L 0 8 Z" fill="#8B949E"/>
+    </marker>
+  </defs>
+
+  <g transform="translate(720 148)">
+    <g transform="translate(0 0)">
+      <rect width="424" height="54" rx="10" fill="#161B22" stroke="#30363D"/>
+      <text x="16" y="23" font-size="13" fill="#58A6FF"
+            font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">01</text>
+      <text x="48" y="23" font-size="18" font-weight="600" fill="#E6EDF3">API 层</text>
+      <text x="240" y="23" font-size="16" fill="#8B949E">接收消息 / 返回结果</text>
+    </g>
+    <g transform="translate(0 66)">
+      <rect width="424" height="54" rx="10" fill="#161B22" stroke="#30363D"/>
+      <text x="16" y="23" font-size="13" fill="#58A6FF"
+            font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">02</text>
+      <text x="48" y="23" font-size="18" font-weight="600" fill="#E6EDF3">Service 层</text>
+      <text x="240" y="23" font-size="16" fill="#8B949E">组织一次完整处理</text>
+    </g>
+    <g transform="translate(0 132)">
+      <rect width="424" height="54" rx="10" fill="#161B22" stroke="#30363D"/>
+      <text x="16" y="23" font-size="13" fill="#58A6FF"
+            font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">03</text>
+      <text x="48" y="23" font-size="18" font-weight="600" fill="#E6EDF3">Engine 层</text>
+      <text x="240" y="23" font-size="16" fill="#8B949E">会话准备 · 消息分流 · 提交</text>
+    </g>
+    <g transform="translate(0 198)">
+      <rect width="424" height="54" rx="10" fill="#1C2128" stroke="#2F81F7"/>
+      <text x="16" y="23" font-size="13" fill="#58A6FF"
+            font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">04</text>
+      <text x="48" y="23" font-size="18" font-weight="600" fill="#E6EDF3">Planning 层</text>
+      <text x="240" y="23" font-size="16" fill="#8B949E">规划 + 校验 + 澄清</text>
+    </g>
+    <g transform="translate(0 264)">
+      <rect width="424" height="54" rx="10" fill="#161B22" stroke="#30363D"/>
+      <text x="16" y="23" font-size="13" fill="#58A6FF"
+            font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">05</text>
+      <text x="48" y="23" font-size="18" font-weight="600" fill="#E6EDF3">Repository 层</text>
+      <text x="240" y="23" font-size="16" fill="#8B949E">状态读取与保存</text>
+    </g>
+    <g transform="translate(0 330)">
+      <rect width="424" height="54" rx="10" fill="#161B22" stroke="#30363D"/>
+      <text x="16" y="23" font-size="13" fill="#58A6FF"
+            font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">06</text>
+      <text x="48" y="23" font-size="18" font-weight="600" fill="#E6EDF3">基础设施</text>
+      <text x="240" y="23" font-size="16" fill="#8B949E">LLM / DB / 电商 API</text>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1200" height="150" viewBox="0 0 1200 150"
+     role="img" aria-labelledby="title desc"
+     font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <title id="title">项目结构</title>
+  <desc id="desc">三个子项目：客服后端、模拟电商后端、客服前端。</desc>
+  <rect width="1200" height="150" rx="20" fill="#0D1117"/>
+
+  <g transform="translate(56 0)">
+    <text x="0" y="52" font-size="17" fill="#58A6FF"
+          font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">05</text>
+    <text x="48" y="96" font-size="40" font-weight="700" fill="#F0F6FC">项目结构</text>
+    <text x="0" y="126" font-size="19" fill="#8B949E">客服后端 / 模拟电商后端 / 客服前端</text>
+    <rect x="0" y="136" width="72" height="4" rx="2" fill="#2F81F7"/>
+  </g>
+
+  <g transform="translate(978 53)">
+    <rect width="166" height="44" rx="22" fill="#161B22" stroke="#30363D" stroke-width="1.5"/>
+    <text x="83" y="27" font-size="17" text-anchor="middle" fill="#E6EDF3"
+          font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">MONOREPO</text>
+  </g>
+</svg>

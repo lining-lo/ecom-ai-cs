@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1200" height="320" viewBox="0 0 1200 320"
+     role="img" aria-labelledby="title desc"
+     font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <title id="title">快速开始：五个启动步骤</title>
+  <desc id="desc">依次启动数据库、配置客服后端环境、启动模拟电商后端、启动客服后端、启动前端，然后访问本机页面开始对话。</desc>
+
+  <rect width="1200" height="320" rx="24" fill="#0D1117"/>
+
+  <g transform="translate(56 44)">
+    <text x="0" y="40" font-size="40" font-weight="700" fill="#F0F6FC">快速开始</text>
+    <text x="192" y="36" font-size="18" fill="#58A6FF"
+          font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">5 STEPS</text>
+    <text x="0" y="76" font-size="21" fill="#8B949E">按顺序启动四个组件，浏览器里即可开始对话。</text>
+  </g>
+
+  <g transform="translate(56 130)">
+    <g transform="translate(0 0)">
+      <rect width="196" height="128" rx="14" fill="#161B22" stroke="#30363D" stroke-width="1.5"/>
+      <text x="20" y="36" font-size="15" fill="#58A6FF"
+            font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">01</text>
+      <text x="20" y="66" font-size="20" font-weight="600" fill="#E6EDF3">启动数据库</text>
+      <text x="20" y="94" font-size="13" fill="#8B949E"
+            font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">MySQL · Docker / 本地</text>
+    </g>
+    <text x="216" y="86" font-size="20" text-anchor="middle" fill="#6E7681">→</text>
+
+    <g transform="translate(224 0)">
+      <rect width="196" height="128" rx="14" fill="#161B22" stroke="#30363D" stroke-width="1.5"/>
+      <text x="20" y="36" font-size="15" fill="#58A6FF"
+            font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">02</text>
+      <text x="20" y="66" font-size="20" font-weight="600" fill="#E6EDF3">配置 .env</text>
+      <text x="20" y="94" font-size="13" fill="#8B949E"
+            font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">LLM / DB / 电商 API</text>
+    </g>
+    <text x="440" y="86" font-size="20" text-anchor="middle" fill="#6E7681">→</text>
+
+    <g transform="translate(448 0)">
+      <rect width="196" height="128" rx="14" fill="#161B22" stroke="#30363D" stroke-width="1.5"/>
+      <text x="20" y="36" font-size="15" fill="#58A6FF"
+            font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">03</text>
+      <text x="20" y="66" font-size="20" font-weight="600" fill="#E6EDF3">电商后端</text>
+      <text x="20" y="94" font-size="13" fill="#8B949E"
+            font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">uv run main.py</text>
+    </g>
+    <text x="664" y="86" font-size="20" text-anchor="middle" fill="#6E7681">→</text>
+
+    <g transform="translate(672 0)">
+      <rect width="196" height="128" rx="14" fill="#161B22" stroke="#30363D" stroke-width="1.5"/>
+      <text x="20" y="36" font-size="15" fill="#58A6FF"
+            font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">04</text>
+      <text x="20" y="66" font-size="20" font-weight="600" fill="#E6EDF3">客服后端</text>
+      <text x="20" y="94" font-size="13" fill="#8B949E"
+            font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">uv run app.main</text>
+    </g>
+    <text x="888" y="86" font-size="20" text-anchor="middle" fill="#6E7681">→</text>
+
+    <g transform="translate(896 0)">
+      <rect width="196" height="128" rx="14" fill="#161B22" stroke="#30363D" stroke-width="1.5"/>
+      <text x="20" y="36" font-size="15" fill="#58A6FF"
+            font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">05</text>
+      <text x="20" y="66" font-size="20" font-weight="600" fill="#E6EDF3">前端页面</text>
+      <text x="20" y="94" font-size="13" fill="#8B949E"
+            font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">npm run dev</text>
+    </g>
+  </g>
+
+  <g transform="translate(390 268)">
+    <rect width="420" height="40" rx="20" fill="#1C2128" stroke="#14B8A6" stroke-width="1.5"/>
+    <text x="210" y="26" font-size="17" text-anchor="middle" fill="#2DD4BF"
+          font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">→ 访问 http://127.0.0.1:5173</text>
+  </g>
+</svg>

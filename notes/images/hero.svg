@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1200" height="440" viewBox="0 0 1200 440"
+     role="img" aria-labelledby="title desc"
+     font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <title id="title">电商小二智能客服系统</title>
+  <desc id="desc">基于 LLM 的电商智能客服系统：自然语言描述需求，系统判断交给谁处理，再以工程化方式执行。右侧展示退款申请对话与业务对象卡片。</desc>
+
+  <rect width="1200" height="440" rx="24" fill="#0D1117"/>
+  <line x1="716" y1="64" x2="716" y2="430" stroke="#21262D" stroke-width="2"/>
+
+  <g transform="translate(56 44)">
+    <text x="0" y="18" font-size="18" fill="#8B949E"
+          font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">LLM × ENGINEERING — 电商智能客服</text>
+
+    <text x="0" y="92" font-size="66" font-weight="800" fill="#F0F6FC">电商小二</text>
+    <text x="0" y="162" font-size="66" font-weight="800" fill="#F0F6FC">智能客服系统</text>
+
+    <text x="2" y="200" font-size="20" fill="#58A6FF"
+          font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">LLM-Powered E-Commerce Customer Service</text>
+
+    <text x="0" y="252" font-size="23" fill="#C9D1D9">用自然语言描述需求，系统判断这句话该交给谁处理，</text>
+    <text x="0" y="288" font-size="23" fill="#C9D1D9">再用工程化方式把事情做完——查订单、查物流、</text>
+    <text x="0" y="324" font-size="23" fill="#C9D1D9">申请退款、咨询政策，都在同一个对话里完成。</text>
+
+    <g transform="translate(0 352)">
+      <rect width="164" height="40" rx="20" fill="#161B22" stroke="#30363D" stroke-width="1.5"/>
+      <text x="82" y="25" font-size="17" text-anchor="middle" fill="#E6EDF3"
+            font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">1 规划 · LLM</text>
+
+      <text x="180" y="27" font-size="19" text-anchor="middle" fill="#6E7681">→</text>
+
+      <rect x="204" width="164" height="40" rx="20" fill="#161B22" stroke="#30363D" stroke-width="1.5"/>
+      <text x="286" y="25" font-size="17" text-anchor="middle" fill="#E6EDF3"
+            font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">2 校验 · 规则</text>
+
+      <text x="384" y="27" font-size="19" text-anchor="middle" fill="#6E7681">→</text>
+
+      <rect x="408" width="164" height="40" rx="20" fill="#161B22" stroke="#30363D" stroke-width="1.5"/>
+      <text x="490" y="25" font-size="17" text-anchor="middle" fill="#E6EDF3"
+            font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">3 执行 · 代码</text>
+    </g>
+  </g>
+
+  <g transform="translate(752 40)">
+    <rect width="396" height="364" rx="16" fill="#161B22" stroke="#30363D" stroke-width="1.5"/>
+
+    <circle cx="28" cy="26" r="5" fill="#F85149"/>
+    <circle cx="46" cy="26" r="5" fill="#F0883E"/>
+    <circle cx="64" cy="26" r="5" fill="#3FB950"/>
+    <text x="88" y="31" font-size="17" fill="#C9D1D9">电商客服系统</text>
+    <text x="376" y="31" font-size="15" text-anchor="end" fill="#8B949E"
+          font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">u1001</text>
+    <line x1="0" y1="52" x2="396" y2="52" stroke="#21262D" stroke-width="1.5"/>
+
+    <rect x="240" y="70" width="140" height="34" rx="12" fill="#1F6FEB"/>
+    <text x="310" y="92" font-size="16" text-anchor="middle" fill="#FFFFFF">我要退款</text>
+
+    <rect x="16" y="120" width="260" height="34" rx="12" fill="#21262D"/>
+    <text x="146" y="142" font-size="16" text-anchor="middle" fill="#E6EDF3">好的，请告诉我你的订单号。</text>
+
+    <rect x="240" y="170" width="150" height="34" rx="12" fill="#1F6FEB"/>
+    <text x="315" y="192" font-size="15" text-anchor="middle" fill="#FFFFFF"
+          font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">A20260410001</text>
+
+    <rect x="16" y="220" width="300" height="96" rx="12" fill="#21262D"/>
+    <text x="30" y="242" font-size="15" fill="#E6EDF3">退款申请已提交，我们会尽快处理。</text>
+    <rect x="30" y="252" width="272" height="52" rx="10" fill="#1C2128" stroke="#30363D" stroke-width="1.5"/>
+    <text x="44" y="273" font-size="14" fill="#E6EDF3">iPhone 15 Pro · 远峰蓝</text>
+    <text x="44" y="292" font-size="13" fill="#7EE787"
+          font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">¥ 8999.00</text>
+    <rect x="238" y="258" width="54" height="22" rx="11" fill="#14B8A6" fill-opacity="0.16"/>
+    <text x="265" y="273" font-size="12" text-anchor="middle" fill="#2DD4BF">待发货</text>
+
+    <rect x="16" y="326" width="364" height="38" rx="12" fill="#0D1117" stroke="#30363D" stroke-width="1.5"/>
+    <text x="30" y="350" font-size="14" fill="#6E7681">请输入咨询内容...</text>
+    <rect x="324" y="330" width="48" height="30" rx="10" fill="#14B8A6"/>
+    <text x="348" y="350" font-size="13" text-anchor="middle" fill="#042F2B">发送</text>
+  </g>
+</svg>

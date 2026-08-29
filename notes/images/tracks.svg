@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1200" height="400" viewBox="0 0 1200 400"
+     role="img" aria-labelledby="title desc"
+     font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <title id="title">核心能力：三条处理轨道</title>
+  <desc id="desc">系统把用户输入分为任务流程、信息检索、闲聊三条轨道：任务由 YAML 流程编排执行，知识先检索可信来源再生成回复，闲聊作为自然兜底。</desc>
+
+  <rect width="1200" height="400" rx="24" fill="#0D1117"/>
+
+  <g transform="translate(56 44)">
+    <text x="0" y="40" font-size="40" font-weight="700" fill="#F0F6FC">核心能力</text>
+    <text x="192" y="36" font-size="18" fill="#58A6FF"
+          font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">THREE TRACKS</text>
+    <text x="0" y="76" font-size="21" fill="#8B949E">同一份输入，系统先判断意图，再进入三条处理轨道之一。</text>
+  </g>
+
+  <g transform="translate(56 132)">
+    <rect width="340" height="236" rx="16" fill="#161B22" stroke="#30363D" stroke-width="1.5"/>
+    <g transform="translate(24 24)">
+      <text x="0" y="14" font-size="16" fill="#8B949E"
+            font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">TRACK 01 · TASK</text>
+      <text x="0" y="52" font-size="30" font-weight="700" fill="#E6EDF3">任务流程</text>
+      <text x="0" y="82" font-size="18" fill="#8B949E">步骤明确的业务任务，系统逐步</text>
+      <text x="0" y="106" font-size="18" fill="#8B949E">收集信息、执行动作、返回结果。</text>
+
+      <rect x="0" y="124" width="86" height="34" rx="9" fill="#1C2128" stroke="#30363D"/>
+      <text x="43" y="146" font-size="16" text-anchor="middle" fill="#C9D1D9">查询订单</text>
+      <rect x="98" y="124" width="74" height="34" rx="9" fill="#1C2128" stroke="#30363D"/>
+      <text x="135" y="146" font-size="16" text-anchor="middle" fill="#C9D1D9">查物流</text>
+      <rect x="184" y="124" width="86" height="34" rx="9" fill="#1C2128" stroke="#30363D"/>
+      <text x="227" y="146" font-size="16" text-anchor="middle" fill="#C9D1D9">申请退款</text>
+
+      <text x="0" y="192" font-size="16" fill="#6E7681"
+            font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">YAML 编排 · Action 执行</text>
+    </g>
+  </g>
+
+  <g transform="translate(428 132)">
+    <rect width="340" height="236" rx="16" fill="#161B22" stroke="#30363D" stroke-width="1.5"/>
+    <g transform="translate(24 24)">
+      <text x="0" y="14" font-size="16" fill="#8B949E"
+            font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">TRACK 02 · KNOWLEDGE</text>
+      <text x="0" y="52" font-size="30" font-weight="700" fill="#E6EDF3">信息检索</text>
+      <text x="0" y="82" font-size="18" fill="#8B949E">查询型问题，先找到可信来源，</text>
+      <text x="0" y="106" font-size="18" fill="#8B949E">再让模型基于信息生成自然回复。</text>
+
+      <rect x="0" y="124" width="86" height="34" rx="9" fill="#1C2128" stroke="#30363D"/>
+      <text x="43" y="146" font-size="16" text-anchor="middle" fill="#C9D1D9">商品信息</text>
+      <rect x="98" y="124" width="86" height="34" rx="9" fill="#1C2128" stroke="#30363D"/>
+      <text x="141" y="146" font-size="16" text-anchor="middle" fill="#C9D1D9">政策规则</text>
+      <rect x="196" y="124" width="92" height="34" rx="9" fill="#1C2128" stroke="#30363D"/>
+      <text x="242" y="146" font-size="16" text-anchor="middle" fill="#C9D1D9">FAQ · RAG</text>
+
+      <text x="0" y="192" font-size="16" fill="#6E7681"
+            font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">API · FAQ · RAG 检索</text>
+    </g>
+  </g>
+
+  <g transform="translate(800 132)">
+    <rect width="340" height="236" rx="16" fill="#161B22" stroke="#30363D" stroke-width="1.5"/>
+    <g transform="translate(24 24)">
+      <text x="0" y="14" font-size="16" fill="#8B949E"
+            font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">TRACK 03 · CHITCHAT</text>
+      <text x="0" y="52" font-size="30" font-weight="700" fill="#E6EDF3">闲聊兜底</text>
+      <text x="0" y="82" font-size="18" fill="#8B949E">轻量自然对话，结合当前消息</text>
+      <text x="0" y="106" font-size="18" fill="#8B949E">和最近上下文，由大模型生成回复。</text>
+
+      <rect x="0" y="124" width="86" height="34" rx="9" fill="#1C2128" stroke="#30363D"/>
+      <text x="43" y="146" font-size="16" text-anchor="middle" fill="#C9D1D9">打招呼</text>
+      <rect x="98" y="124" width="86" height="34" rx="9" fill="#1C2128" stroke="#30363D"/>
+      <text x="141" y="146" font-size="16" text-anchor="middle" fill="#C9D1D9">寒暄</text>
+      <rect x="196" y="124" width="86" height="34" rx="9" fill="#1C2128" stroke="#30363D"/>
+      <text x="239" y="146" font-size="16" text-anchor="middle" fill="#C9D1D9">通用问答</text>
+
+      <text x="0" y="192" font-size="16" fill="#6E7681"
+            font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">上下文自然生成</text>
+    </g>
+  </g>
+</svg>

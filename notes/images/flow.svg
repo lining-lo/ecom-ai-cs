@@ -1,0 +1,140 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1200" height="660" viewBox="0 0 1200 660"
+     role="img" aria-labelledby="title desc"
+     font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <title id="title">一条消息的处理流程</title>
+  <desc id="desc">文本消息先生成计划、再校验、按轨道分流；对象消息记录聚焦对象并尝试补槽；最终统一提交 Turn、保存状态并返回回复。</desc>
+
+  <rect width="1200" height="660" rx="24" fill="#0D1117"/>
+
+  <g transform="translate(56 36)">
+    <text x="0" y="40" font-size="40" font-weight="700" fill="#F0F6FC">一条消息的处理流程</text>
+    <text x="540" y="36" font-size="18" fill="#58A6FF"
+          font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">MESSAGE FLOW</text>
+    <text x="0" y="76" font-size="21" fill="#8B949E">从输入到回复：先规划、再校验、后执行。</text>
+  </g>
+
+  <text x="90" y="142" font-size="17" fill="#58A6FF"
+        font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">TEXT · 文本消息</text>
+  <text x="660" y="142" font-size="17" fill="#58A6FF"
+        font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">OBJECT · 对象消息</text>
+
+  <defs>
+    <marker id="flow-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M 0 0 L 8 4 L 0 8 Z" fill="#8B949E"/>
+    </marker>
+  </defs>
+
+  <g stroke="#8B949E" stroke-width="2" fill="none" marker-end="url(#flow-arrow)">
+    <path d="M 330 182 L 440 182"/>
+    <path d="M 500 216 V 240 H 205 V 280"/>
+    <path d="M 620 216 V 240 H 780 V 280"/>
+    <path d="M 340 316 L 420 316"/>
+    <path d="M 470 352 V 390 H 205 V 430"/>
+    <path d="M 535 352 V 430"/>
+    <path d="M 900 316 L 960 316"/>
+    <path d="M 1010 352 V 390 H 780 V 430"/>
+    <path d="M 1100 352 V 430"/>
+    <path d="M 205 498 V 530 H 370 V 560"/>
+    <path d="M 535 498 V 530 H 370 V 560"/>
+    <path d="M 780 498 V 530 H 615 V 560"/>
+    <path d="M 1065 498 V 530 H 850 V 560"/>
+  </g>
+
+  <text x="480" y="384" font-size="15" fill="#D29922">有效</text>
+  <text x="260" y="386" font-size="15" fill="#D29922">无效</text>
+  <text x="818" y="384" font-size="15" fill="#7EE787">是</text>
+  <text x="1114" y="384" font-size="15" fill="#D29922">否</text>
+
+  <g transform="translate(90 148)">
+    <rect width="240" height="68" rx="12" fill="#1C2128" stroke="#2F81F7" stroke-width="1.5"/>
+    <text x="120" y="26" font-size="15" text-anchor="middle" fill="#8B949E"
+          font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">MESSAGE</text>
+    <text x="120" y="50" font-size="20" text-anchor="middle" fill="#E6EDF3">用户发送消息</text>
+  </g>
+
+  <g transform="translate(440 148)">
+    <rect width="220" height="68" rx="12" fill="#161B22" stroke="#D29922" stroke-width="1.5"/>
+    <text x="110" y="26" font-size="15" text-anchor="middle" fill="#8B949E"
+          font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">MESSAGE TYPE?</text>
+    <text x="110" y="50" font-size="20" text-anchor="middle" fill="#E6EDF3">文本还是对象？</text>
+  </g>
+
+  <g transform="translate(90 280)">
+    <rect width="250" height="72" rx="12" fill="#161B22" stroke="#30363D" stroke-width="1.5"/>
+    <text x="125" y="28" font-size="15" text-anchor="middle" fill="#8B949E"
+          font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">TurnPlanner</text>
+    <text x="125" y="52" font-size="20" text-anchor="middle" fill="#E6EDF3">生成处理计划</text>
+  </g>
+
+  <g transform="translate(420 280)">
+    <rect width="230" height="72" rx="12" fill="#161B22" stroke="#D29922" stroke-width="1.5"/>
+    <text x="115" y="28" font-size="15" text-anchor="middle" fill="#8B949E"
+          font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">TurnPlanValidator</text>
+    <text x="115" y="52" font-size="20" text-anchor="middle" fill="#E6EDF3">计划是否有效？</text>
+  </g>
+
+  <g transform="translate(90 430)">
+    <rect width="230" height="68" rx="12" fill="#161B22" stroke="#30363D" stroke-width="1.5"/>
+    <text x="115" y="26" font-size="15" text-anchor="middle" fill="#8B949E"
+          font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">ClarifyResponder</text>
+    <text x="115" y="50" font-size="20" text-anchor="middle" fill="#E6EDF3">澄清补齐信息</text>
+  </g>
+
+  <g transform="translate(420 430)">
+    <rect width="230" height="68" rx="12" fill="#1C2128" stroke="#2F81F7" stroke-width="1.5"/>
+    <text x="115" y="22" font-size="14" text-anchor="middle" fill="#8B949E"
+          font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">ROUTE</text>
+    <text x="115" y="46" font-size="20" text-anchor="middle" fill="#E6EDF3">轨道分流</text>
+    <text x="115" y="60" font-size="12" text-anchor="middle" fill="#8B949E">Task · Knowledge · Chitchat</text>
+  </g>
+
+  <g transform="translate(660 280)">
+    <rect width="240" height="72" rx="12" fill="#161B22" stroke="#30363D" stroke-width="1.5"/>
+    <text x="120" y="28" font-size="15" text-anchor="middle" fill="#8B949E"
+          font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">FocusObject</text>
+    <text x="120" y="52" font-size="20" text-anchor="middle" fill="#E6EDF3">记录聚焦对象</text>
+  </g>
+
+  <g transform="translate(960 280)">
+    <rect width="210" height="72" rx="12" fill="#161B22" stroke="#D29922" stroke-width="1.5"/>
+    <text x="105" y="28" font-size="15" text-anchor="middle" fill="#8B949E"
+          font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">SlotCheck</text>
+    <text x="105" y="52" font-size="20" text-anchor="middle" fill="#E6EDF3">能否补槽？</text>
+  </g>
+
+  <g transform="translate(660 430)">
+    <rect width="240" height="68" rx="12" fill="#161B22" stroke="#30363D" stroke-width="1.5"/>
+    <text x="120" y="26" font-size="15" text-anchor="middle" fill="#8B949E"
+          font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">TaskHandler</text>
+    <text x="120" y="50" font-size="20" text-anchor="middle" fill="#E6EDF3">执行补槽命令</text>
+  </g>
+
+  <g transform="translate(960 430)">
+    <rect width="210" height="68" rx="12" fill="#161B22" stroke="#30363D" stroke-width="1.5"/>
+    <text x="105" y="26" font-size="15" text-anchor="middle" fill="#8B949E"
+          font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">ClarifyResponder</text>
+    <text x="105" y="50" font-size="20" text-anchor="middle" fill="#E6EDF3">询问对象用途</text>
+  </g>
+
+  <g transform="translate(260 560)">
+    <rect width="220" height="70" rx="14" fill="#1C2128" stroke="#2F81F7" stroke-width="1.5"/>
+    <text x="110" y="28" font-size="15" text-anchor="middle" fill="#58A6FF"
+          font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">COMMIT</text>
+    <text x="110" y="52" font-size="20" text-anchor="middle" fill="#E6EDF3">提交 Turn</text>
+  </g>
+
+  <g transform="translate(500 560)">
+    <rect width="230" height="70" rx="14" fill="#161B22" stroke="#30363D" stroke-width="1.5"/>
+    <text x="115" y="28" font-size="15" text-anchor="middle" fill="#8B949E"
+          font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">PERSIST</text>
+    <text x="115" y="52" font-size="20" text-anchor="middle" fill="#E6EDF3">保存 DialogueState</text>
+  </g>
+
+  <g transform="translate(750 560)">
+    <rect width="200" height="70" rx="14" fill="#161B22" stroke="#30363D" stroke-width="1.5"/>
+    <text x="100" y="28" font-size="15" text-anchor="middle" fill="#8B949E"
+          font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">RESPONSE</text>
+    <text x="100" y="52" font-size="20" text-anchor="middle" fill="#E6EDF3">返回回复</text>
+  </g>
+</svg>
